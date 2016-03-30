@@ -1,7 +1,7 @@
 package com.example.shubhangi.moviesapp;
 
 import android.content.Intent;
-import android.net.Uri;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     public static String validate_token="https://www.themoviedb.org/authenticate/";
     public static String sessionurl="http://api.themoviedb.org/3/authentication/session/new?"+api_key+"&request_token=";
     int jugaad=-1;
-
+    MediaPlayer song;
     int check=-1;
     TextView tv;
     ArrayList<Movie> movies;
@@ -44,41 +44,46 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //tv=(TextView)findViewById(R.id.textView);
+
+        song = MediaPlayer.create(this,R.raw.sound);
+        song.setLooping(true);
+        //song.start();
+
         grid=(GridView)findViewById(R.id.gridView);
 
         Call<RequestToken> tok = ApiClient.getInterface().getToken(api_key);
 
-        tok.enqueue(new Callback<RequestToken>() {
-            @Override
-            public void onResponse(Call<RequestToken> call, Response<RequestToken> response) {
-                if (response.isSuccessful()) {
-                    token = response.body();
-                    Toast.makeText(MainActivity.this,
-                            token.getmToken(), Toast.LENGTH_LONG).show();
-
-                    validate_token += token.getmToken();
-
-                    Intent i = new Intent();
-                    i.setAction(Intent.ACTION_VIEW);
-                    i.setData(Uri.parse(validate_token));
-                    startActivity(i);
-                    jugaad=1;
-
-                } else {
-                    Toast.makeText(MainActivity.this,
-                            "Session not generated!!", Toast.LENGTH_LONG).show();
-                    jugaad=1;
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<RequestToken> call, Throwable t) {
-                Toast.makeText(MainActivity.this,
-                        t.getMessage(), Toast.LENGTH_LONG).show();
-                jugaad=1;
-            }
-        });
+//        tok.enqueue(new Callback<RequestToken>() {
+//            @Override
+//            public void onResponse(Call<RequestToken> call, Response<RequestToken> response) {
+//                if (response.isSuccessful()) {
+//                    token = response.body();
+//                    Toast.makeText(MainActivity.this,
+//                            token.getmToken(), Toast.LENGTH_LONG).show();
+//
+//                    validate_token += token.getmToken();
+//
+//                    Intent i = new Intent();
+//                    i.setAction(Intent.ACTION_VIEW);
+//                    i.setData(Uri.parse(validate_token));
+//                    startActivity(i);
+//                    jugaad=1;
+//
+//                } else {
+//                    Toast.makeText(MainActivity.this,
+//                            "Session not generated!!", Toast.LENGTH_LONG).show();
+//                    jugaad=1;
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Call<RequestToken> call, Throwable t) {
+//                Toast.makeText(MainActivity.this,
+//                        t.getMessage(), Toast.LENGTH_LONG).show();
+//                jugaad=1;
+//            }
+//        });
         //while(jugaad==-1);
 
 //        sessionurl += token.getmToken();
@@ -158,5 +163,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+       // song.start();
+    }
 
 }

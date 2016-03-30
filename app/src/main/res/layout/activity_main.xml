@@ -8,13 +8,14 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.example.shubhangi.moviesapp.MainActivity">
+    tools:context="com.example.shubhangi.moviesapp.MainActivity"
+    android:background="#978d8d">
 
     <GridView
         android:id="@+id/gridView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:numColumns="auto_fit"
+        android:numColumns="2"
         android:columnWidth="@dimen/grid_item_movie_width"
         android:verticalSpacing="@dimen/grid_item_movie_spacing"
         android:horizontalSpacing="@dimen/grid_item_movie_spacing"

@@ -3,9 +3,11 @@ package com.example.shubhangi.moviesapp.network;
 import com.example.shubhangi.moviesapp.Models.Movie_response;
 import com.example.shubhangi.moviesapp.Models.RequestToken;
 import com.example.shubhangi.moviesapp.Models.Session;
+import com.example.shubhangi.moviesapp.Models.TrailerResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
@@ -21,6 +23,9 @@ public interface ApiInterface {
 
     @GET("authentication/session/new")
     Call<Session> getSession(@Query("api_key") String url,@Query("request_token") String req_token);
+
+    @GET("movie/{id}/videos")
+    Call<TrailerResponse> getTrailer(@Path("id") int movieId,@Query("api_key") String url);
 
 //    @GET("users")
 //    Call<ArrayList<User>> getUsers();
