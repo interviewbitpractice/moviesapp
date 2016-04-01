@@ -33,6 +33,9 @@ public class Movie implements Serializable {
     @SerializedName("adult")
     String madult;
 
+    @SerializedName("backdrop_path")
+    String mpic;
+
     String key;
     String youtubeurl;
 
@@ -115,5 +118,13 @@ public class Movie implements Serializable {
 
     public void setYoutubeurl(String youtubeurl) {
         this.youtubeurl = youtubeurl;
+    }
+
+    public String getMpic() {
+        return mpic;
+    }
+
+    public void setMpic(int mid) {
+        this.mpic = mpic;
     }
 }

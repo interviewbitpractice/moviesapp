@@ -46,7 +46,7 @@ public class moviearrayadapter extends ArrayAdapter<Movie> {
         Movie s = movieslist.get(position);
 
         //vh.img.setText(s.getMtitle() + "hii");
-        Picasso.with(context).load("https://image.tmdb.org/t/p/w185"+s.getMurl()).into(vh.img);
+        Picasso.with(context).load("https://image.tmdb.org/t/p/w185"+s.getMurl()).fit().into(vh.img);
 
         return convertView;
     }

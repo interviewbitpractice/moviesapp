@@ -15,6 +15,8 @@ import com.example.shubhangi.moviesapp.Models.TrailerResponse;
 import com.example.shubhangi.moviesapp.network.ApiClient;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -24,8 +26,7 @@ public class MovieDetail extends AppCompatActivity {
     TextView release,title,overview,ratings,reviews;
     Movie obj;
     TrailerResponse response1;
-    Trailer[] array  = new Trailer[2];
-
+    ArrayList<Trailer> array;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,12 +40,15 @@ public class MovieDetail extends AppCompatActivity {
         reviews=(TextView)findViewById(R.id.reviews);
         trailer=(ImageView)findViewById(R.id.trailer);
 
+        response1 = new TrailerResponse();
+        array = new ArrayList<>();
+
         Intent i = getIntent();
         Bundle b = i.getBundleExtra("movie_obj");
-
+        array = new ArrayList<>();
         obj = (Movie) b.getSerializable("object");
 
-        if(obj.getMurl()!="") Picasso.with(this).load("https://image.tmdb.org/t/p/w185"+obj.getMurl()).into(poster);
+        if(obj.getMurl()!="") Picasso.with(this).load("https://image.tmdb.org/t/p/w185"+obj.getMpic()).fit().into(poster);
 //        Picasso.with(this).load("https://image.tmdb.org/t/p/w185"+obj.getMurl()).into(trailer);
 
         title.setText(obj.getMtitle());
@@ -65,18 +69,22 @@ public class MovieDetail extends AppCompatActivity {
                     public void onResponse(Call<TrailerResponse> call, Response<TrailerResponse> response) {
                         if (response.isSuccessful()) {
                             response1 = response.body();
-                            array[0] = response1.getTresponse()[0];
-                            array[1] = response1.getTresponse()[1];
-
-                            Intent i = new Intent();
-                            i.setAction(Intent.ACTION_VIEW);
-                            i.setData(Uri.parse("https://www.youtube.com/watch?v=12"));
-                            startActivity(i);
+                            int size = response1.getTresponse().size();
+                            for(int i=0;i<size;i++)  array.add(response1.getTresponse().get(i));
+                            if(size!=0) {
+                                Intent i = new Intent();
+                                i.setAction(Intent.ACTION_VIEW);
+                                i.setData(Uri.parse("https://www.youtube.com/watch?v=" + array.get(0).getMkey()));
+                                startActivity(i);
+                            }else{
+                                Toast.makeText(MovieDetail.this,
+                                        "Trailer does not exist...!!!", Toast.LENGTH_LONG).show();
+                            }
 
                         } else {
                             Toast.makeText(MovieDetail.this,
                                     "Trailer not available...!!!", Toast.LENGTH_LONG).show();
-                       }
+                        }
                     }
 
                     @Override
@@ -86,10 +94,6 @@ public class MovieDetail extends AppCompatActivity {
                     }
                 });
 
-                Intent i = new Intent();
-                i.setAction(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(""));
-                startActivity(i);
             }
         });
     }

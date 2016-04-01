@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -44,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //tv=(TextView)findViewById(R.id.textView);
+        this.setTitle("Most Popular Movies");
 
         song = MediaPlayer.create(this,R.raw.sound);
         song.setLooping(true);
@@ -131,8 +134,8 @@ public class MainActivity extends AppCompatActivity {
                     for (int i=0;i<size;i++)
                         movies.add(result.getMovieResult().get(i));
                     check = 1;
-                    Toast.makeText(MainActivity.this,
-                            movies.size() + "   " + movies.get(0).getMtitle(), Toast.LENGTH_LONG).show();
+//                    Toast.makeText(MainActivity.this,
+//                            movies.size() + "   " + movies.get(0).getMtitle(), Toast.LENGTH_LONG).show();
                     adapter.notifyDataSetChanged();
                 } else {
                     Toast.makeText(MainActivity.this,
@@ -169,4 +172,49 @@ public class MainActivity extends AppCompatActivity {
        // song.start();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int i = item.getItemId();
+        Call<Movie_response> allMovieCall = null;
+        String sort;
+        if(i==R.id.popular){
+            allMovieCall = ApiClient.getInterface().getMovie(api_key);
+            this.setTitle("Most Popular Movies");
+        }else if(i == R.id.top){
+            allMovieCall = ApiClient.getInterface().gettopMovie(api_key);
+            this.setTitle("Top Rated Movies");
+        }else if(i == R.id.upcoming){
+            allMovieCall = ApiClient.getInterface().getupMovie(api_key);
+            this.setTitle("Upcoming Movies");
+        }
+            allMovieCall.enqueue(new Callback<Movie_response>() {
+                @Override
+                public void onResponse(Call<Movie_response> call, Response<Movie_response> response) {
+                    if (response.isSuccessful()) {
+                        result = response.body();
+                        int size=result.getMovieResult().size();
+                        movies.clear();
+                        for (int i=0;i<size;i++)
+                            movies.add(result.getMovieResult().get(i));
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        Toast.makeText(MainActivity.this,
+                                response.message() + response.code(), Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Movie_response> call, Throwable t) {
+                    Toast.makeText(MainActivity.this,
+                            t.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
+        return true;
+    }
 }

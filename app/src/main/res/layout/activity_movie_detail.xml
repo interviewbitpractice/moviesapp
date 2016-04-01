@@ -13,8 +13,8 @@
             android:layout_height="match_parent">
 
             <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="500dp"
+                android:layout_width="450dp"
+                android:layout_height="300dp"
                 android:id="@+id/poster"
                 android:adjustViewBounds="true"
                  />
@@ -57,7 +57,8 @@
                 android:id="@+id/v5"
                 android:layout_centerInParent="true"
                 android:background="@android:color/darker_gray"
-                android:layout_below="@id/v4"></View>
+                android:layout_below="@id/v4"
+                android:foregroundGravity="center"></View>
 
 
             <LinearLayout
@@ -73,7 +74,7 @@
                     android:layout_weight="1"
                     android:text="Details...!!"
                     android:textSize="27dp"
-                    />
+                    android:textStyle="bold|italic" />
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:orientation="horizontal"
@@ -92,7 +93,7 @@
                         android:id="@+id/released"
                         android:textSize="27dp"
                         android:layout_gravity="center_horizontal"
-                        android:gravity="right"
+                        android:gravity="center_vertical|right"
                         android:layout_weight="1"/>
                 </LinearLayout>
 
@@ -114,7 +115,7 @@
                         android:id="@+id/rating"
                         android:textSize="27dp"
                         android:layout_weight="1"
-                        />
+                        android:gravity="center_vertical|right" />
 
                 </LinearLayout>
 
@@ -124,7 +125,9 @@
                     android:id="@+id/v1"
                     android:layout_height="2dp"
                     android:background="@android:color/darker_gray"
-                    android:layout_below="@id/rating"></View>
+                    android:layout_below="@id/rating"
+                    android:foregroundGravity="center"
+                    android:layout_gravity="center_horizontal"></View>
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="35dp"
@@ -136,7 +139,9 @@
                     android:layout_centerInParent="true"
                     android:layout_height="2dp"
                     android:background="@android:color/darker_gray"
-                    android:layout_below="@id/v2"></View>
+                    android:foregroundGravity="center_vertical|center_horizontal"
+                    android:layout_below="@id/v2"
+                    android:layout_gravity="center_horizontal"></View>
 
             </LinearLayout>
 
@@ -146,7 +151,8 @@
                 android:layout_below="@+id/details"
                 android:text="Trailers...!!!"
                 android:textSize="27dp"
-                android:id="@+id/tv4"/>
+                android:id="@+id/tv4"
+                android:textStyle="bold|italic" />
             <!--<ScrollView-->
                 <!--android:layout_width="match_parent"-->
                 <!--android:layout_height="400dp"-->
@@ -173,7 +179,8 @@
                 android:text="Reviews...!!!"
                 android:textSize="27dp"
                 android:id="@+id/tv5"
-                android:layout_below="@id/trailer"/>
+                android:layout_below="@id/trailer"
+                android:textStyle="bold|italic" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

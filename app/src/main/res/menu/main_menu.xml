@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Most Popular"
+        android:id="@+id/popular"
+        android:orderInCategory="1"></item>
+
+    <item android:title="Upcoming"
+        android:id="@+id/upcoming"
+        android:orderInCategory="2"></item>
+
+    <item android:title="Top Rated"
+        android:id="@+id/top"
+        android:orderInCategory="3"></item>
+    <item android:title="Search a Movie"
+        android:id="@+id/search"
+        android:orderInCategory="4"></item>
+</menu>

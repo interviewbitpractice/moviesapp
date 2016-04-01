@@ -18,6 +18,12 @@ public interface ApiInterface {
     @GET("movie/popular")
     Call<Movie_response> getMovie(@Query("api_key") String url);
 
+    @GET("movie/upcoming")
+    Call<Movie_response> getupMovie(@Query("api_key") String url);
+
+    @GET("movie/top_rated")
+    Call<Movie_response> gettopMovie(@Query("api_key") String url);
+
     @GET("authentication/token/new")
     Call<RequestToken> getToken(@Query("api_key") String url);
 
