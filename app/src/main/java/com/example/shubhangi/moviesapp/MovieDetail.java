@@ -1,21 +1,27 @@
 package com.example.shubhangi.moviesapp;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shubhangi.moviesapp.Models.Movie;
+import com.example.shubhangi.moviesapp.Models.Review_response;
 import com.example.shubhangi.moviesapp.Models.Trailer;
 import com.example.shubhangi.moviesapp.Models.TrailerResponse;
 import com.example.shubhangi.moviesapp.network.ApiClient;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,6 +33,8 @@ public class MovieDetail extends AppCompatActivity {
     Movie obj;
     TrailerResponse response1;
     ArrayList<Trailer> array;
+    Review_response allReviews;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +65,32 @@ public class MovieDetail extends AppCompatActivity {
         overview.setText(obj.getMoverview());
 
         Picasso.with(this).load("https://image.tmdb.org/t/p/w185"+obj.getMurl()).into(trailer);
+
+        Call<Review_response> rev = ApiClient.getInterface().getReviews(obj.getMid(),MainActivity.api_key);
+        rev.enqueue(new Callback<Review_response>() {
+            @Override
+            public void onResponse(Call<Review_response> call, Response<Review_response> response) {
+                if (response.isSuccessful()) {
+                    allReviews = response.body();
+                    String appendingReviews="";
+                    int size = allReviews.getReview_response().size();
+                    for(int i=0;i<size;i++){
+                        appendingReviews+= "<b>"+"Review" + (i+1) +"</b>" +":- \n";
+                        appendingReviews+=allReviews.getReview_response().get(i).getReview() + "\n\n";
+                    }
+                    reviews.setText(appendingReviews);
+                } else {
+                    Toast.makeText(MovieDetail.this,
+                            "Trailer not available...!!!", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Review_response> call, Throwable t) {
+
+            }
+        });
+
 
         trailer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,5 +130,27 @@ public class MovieDetail extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.detail,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId()==R.id.favourit){
+            moviessqlhelper sqlHelper = new moviessqlhelper(MovieDetail.this, 1);
+            SQLiteDatabase db = sqlHelper.getWritableDatabase();
+//                // File fileClicked = files[position];
+            ContentValues cv = new ContentValues();
+            cv.put(moviessqlhelper._ID, obj.getMid());
+            Date date = new Date();
+            cv.put(moviessqlhelper.FAV_TABLE_DATE_ADDED, date.toString());
+
+            db.insert(moviessqlhelper.FAV_TABLE_NAME, null, cv);
+        }
+        return true;
     }
 }

@@ -39,4 +39,9 @@ public class startPic extends AppCompatActivity {
         super.onPause();
         song.start();
     }
+    public void onRestart(){
+        super.onRestart();
+        song.stop();
+        finish();
+    }
 }

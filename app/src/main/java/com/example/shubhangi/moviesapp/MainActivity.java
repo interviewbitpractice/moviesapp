@@ -1,6 +1,8 @@
 package com.example.shubhangi.moviesapp;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     TextView tv;
     ArrayList<Movie> movies;
     moviearrayadapter adapter;
+    Movie res;
     GridView grid;
     //public static String tokenurl="http://api.themoviedb.org/3/authentication/token/new?api_key="+ api_key;
     RequestToken token;
@@ -50,71 +53,12 @@ public class MainActivity extends AppCompatActivity {
 
         song = MediaPlayer.create(this,R.raw.sound);
         song.setLooping(true);
+        res = new Movie();
         //song.start();
 
         grid=(GridView)findViewById(R.id.gridView);
 
         Call<RequestToken> tok = ApiClient.getInterface().getToken(api_key);
-
-//        tok.enqueue(new Callback<RequestToken>() {
-//            @Override
-//            public void onResponse(Call<RequestToken> call, Response<RequestToken> response) {
-//                if (response.isSuccessful()) {
-//                    token = response.body();
-//                    Toast.makeText(MainActivity.this,
-//                            token.getmToken(), Toast.LENGTH_LONG).show();
-//
-//                    validate_token += token.getmToken();
-//
-//                    Intent i = new Intent();
-//                    i.setAction(Intent.ACTION_VIEW);
-//                    i.setData(Uri.parse(validate_token));
-//                    startActivity(i);
-//                    jugaad=1;
-//
-//                } else {
-//                    Toast.makeText(MainActivity.this,
-//                            "Session not generated!!", Toast.LENGTH_LONG).show();
-//                    jugaad=1;
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onFailure(Call<RequestToken> call, Throwable t) {
-//                Toast.makeText(MainActivity.this,
-//                        t.getMessage(), Toast.LENGTH_LONG).show();
-//                jugaad=1;
-//            }
-//        });
-        //while(jugaad==-1);
-
-//        sessionurl += token.getmToken();
-//
-//        Call<Session> sess = ApiClient.getInterface().getSession(api_key, token.getmToken());
-//        sess.enqueue(new Callback<Session>() {
-//            @Override
-//            public void onResponse(Call<Session> call, Response<Session> response) {
-//                if (response.isSuccessful()) {
-//                    sessionob = response.body();
-//                    Toast.makeText(MainActivity.this,
-//                            token.getmToken(), Toast.LENGTH_LONG).show();
-//
-//                } else {
-//                    Toast.makeText(MainActivity.this,
-//                            "Token not generated!!", Toast.LENGTH_LONG).show();
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<Session> call, Throwable t) {
-//                Toast.makeText(MainActivity.this,
-//                        t.getMessage(), Toast.LENGTH_LONG).show();
-//            }
-//        });
-
-
-
 
         result = new Movie_response();
         movies=new ArrayList<>();
@@ -133,18 +77,12 @@ public class MainActivity extends AppCompatActivity {
                     int size=result.getMovieResult().size();
                     for (int i=0;i<size;i++)
                         movies.add(result.getMovieResult().get(i));
-                    check = 1;
-//                    Toast.makeText(MainActivity.this,
-//                            movies.size() + "   " + movies.get(0).getMtitle(), Toast.LENGTH_LONG).show();
                     adapter.notifyDataSetChanged();
                 } else {
                     Toast.makeText(MainActivity.this,
                             response.message() + response.code(), Toast.LENGTH_LONG).show();
                 }
             }
-
-
-
             @Override
             public void onFailure(Call<Movie_response> call, Throwable t) {
 
@@ -183,6 +121,56 @@ public class MainActivity extends AppCompatActivity {
         int i = item.getItemId();
         Call<Movie_response> allMovieCall = null;
         String sort;
+
+        if(i == R.id.favourites){
+            setTitle("My Favourites");
+            moviessqlhelper sqlHelper = new moviessqlhelper(this, 1);
+            SQLiteDatabase db = sqlHelper.getReadableDatabase();
+            String[] columns = {moviessqlhelper._ID,moviessqlhelper.FAV_TABLE_DATE_ADDED};
+            Cursor c = db.query(true, moviessqlhelper.FAV_TABLE_NAME, columns, null, null,
+                    null, null, moviessqlhelper.FAV_TABLE_DATE_ADDED + " DESC", null);
+
+            ArrayList<Integer> movie_id = new ArrayList<>();
+
+            while (c.moveToNext()) {
+                int id = c.getInt(c.getColumnIndexOrThrow
+                        (moviessqlhelper._ID));
+                movie_id.add(id);
+            }
+            movies.clear();
+            final ArrayList<Movie> movies_fav=new ArrayList<>();
+            for(int j=0;j<movie_id.size();j++){
+                int y = movie_id.get(j);
+                Toast.makeText(MainActivity.this,
+                                    y+"", Toast.LENGTH_LONG).show();
+                Call<Movie> MovieCall = ApiClient.getInterface().getMovieDetail(y, api_key);
+                MovieCall.enqueue(new Callback<Movie>() {
+                    @Override
+                    public void onResponse(Call<Movie> call, Response<Movie> response) {
+                        if (response.isSuccessful()) {
+                            res = response.body();
+                            movies.add(res);
+                            Toast.makeText(MainActivity.this,
+                                    res.getMtitle(), Toast.LENGTH_LONG).show();
+                            adapter.notifyDataSetChanged();
+                        } else {
+                            Toast.makeText(MainActivity.this,
+                                    response.message() + response.code(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Movie> call, Throwable t) {
+
+                    }
+                });
+
+            }
+//            for(int k=0;k<movies_fav.size();k++) movies.add(movies_fav.get(k));
+            adapter.notifyDataSetChanged();
+            return true;
+        }
+
         if(i==R.id.popular){
             allMovieCall = ApiClient.getInterface().getMovie(api_key);
             this.setTitle("Most Popular Movies");

@@ -1,7 +1,9 @@
 package com.example.shubhangi.moviesapp.network;
 
+import com.example.shubhangi.moviesapp.Models.Movie;
 import com.example.shubhangi.moviesapp.Models.Movie_response;
 import com.example.shubhangi.moviesapp.Models.RequestToken;
+import com.example.shubhangi.moviesapp.Models.Review_response;
 import com.example.shubhangi.moviesapp.Models.Session;
 import com.example.shubhangi.moviesapp.Models.TrailerResponse;
 
@@ -32,6 +34,12 @@ public interface ApiInterface {
 
     @GET("movie/{id}/videos")
     Call<TrailerResponse> getTrailer(@Path("id") int movieId,@Query("api_key") String url);
+
+    @GET("movie/{id}")
+    Call<Movie> getMovieDetail(@Path("id") int movieId,@Query("api_key") String url);
+
+    @GET("movie/{id}/reviews")
+    Call<Review_response> getReviews(@Path("id") int movieId,@Query("api_key") String url);
 
 //    @GET("users")
 //    Call<ArrayList<User>> getUsers();
